@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <title>CBE self-tests</title>
+  <style>
+    body { margin: 0; background: #0d0d0d; color: #fff; font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 640px; margin: 0 auto; padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px 40px; }
+    h1 { font-size: 22px; margin: 4px 0 6px; }
+    .sum { padding: 12px 14px; border-radius: 12px; margin: 12px 0; font-weight: 700; border: 1px solid #383835; }
+    .sum.pass { background: rgba(12, 163, 12, .14); border-color: #0ca30c; }
+    .sum.fail { background: rgba(208, 59, 59, .15); border-color: #d03b3b; }
+    ul { list-style: none; padding: 0; margin: 0; }
+    li { padding: 8px 0; border-bottom: 1px solid #2c2c2a; }
+    .ok { color: #4cd64c; } .no { color: #ff7070; }
+    .err { color: #c3c2b7; font-size: 13px; margin-left: 22px; white-space: pre-wrap; }
+    a { color: #9085e9; }
+  </style>
+</head>
+<body>
+  <main>
+    <a href="./">‹ Back to the app</a>
+    <h1>Progression &amp; CBE self-tests</h1>
+    <p style="color:#c3c2b7">Runs the app's rule engine (logic.js) against the test suite in tests.js, right here on this device. Nothing is stored or sent.</p>
+    <div id="sum" class="sum">Running…</div>
+    <ul id="list"></ul>
+  </main>
+  <script type="module">
+    import { report } from './tests.js';
+    const r = report();
+    const sum = document.getElementById('sum');
+    sum.textContent = `${r.passed}/${r.total} tests passed`;
+    sum.className = `sum ${r.passed === r.total ? 'pass' : 'fail'}`;
+    const list = document.getElementById('list');
+    for (const t of r.results) {
+      const li = document.createElement('li');
+      const mark = document.createElement('span');
+      mark.className = t.ok ? 'ok' : 'no';
+      mark.textContent = t.ok ? '✓ ' : '✗ ';
+      li.append(mark, document.createTextNode(t.name));
+      if (!t.ok) { const e = document.createElement('div'); e.className = 'err'; e.textContent = t.err; li.append(e); }
+      list.append(li);
+    }
+    document.title = `${r.passed}/${r.total} · CBE self-tests`;
+  </script>
+</body>
+</html>
